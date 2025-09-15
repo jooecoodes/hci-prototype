@@ -79,7 +79,7 @@ const jeepneyRoutes = [
   },
   {
     name: "R2",
-    color: "green",
+    color: "#de8009",
     coordinates: [
       [8.480, 124.650],
       [8.479, 124.649],
@@ -103,7 +103,7 @@ const jeepneyRoutes = [
       [8.483, 124.631],
     ]
   },
-
+  
     ];
 
 // Haversine distance helper
