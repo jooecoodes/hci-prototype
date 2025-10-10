@@ -19,18 +19,18 @@ const CdoMap = () => {
   const initialZoom = 13; 
 
   const [routes, setRoutes] = useState([]);
+
+  const routeName = "Lumbia (R1) Lumbia -- Cogon Public Market";
+
+  // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
+  const encodedName = encodeURIComponent(routeName);
   
   useEffect(() => {
-    const routeName = "Directions from FH58+9F, Cagayan de Oro, Misamis Oriental, Philippines to FJJP+3WJ, Ipil St, Cagayan de Oro, 9000 Misamis Oriental, Philippines";
-
-    // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
-    const encodedName = encodeURIComponent(routeName);
-
     axios
       .get(`http://localhost:5000/route/${encodedName}`)
       .then((response) => setRoutes(response.data["coordinates"]))
       .catch((error) => console.error("Error:", error));
-  }, [])
+  }, [routeName])
 
    // Coordinates for the Polyline (our route)
   const cdoRouteCoordinates = [
