@@ -1,0 +1,6 @@
+[
+  { "stop_id": "S1", "stop_name": "Cogon Market", "stop_lat": 8.4823, "stop_lon": 124.6477 },
+  { "stop_id": "S2", "stop_name": "Velez Street", "stop_lat": 8.4829, "stop_lon": 124.6451 },
+  { "stop_id": "S3", "stop_name": "CM Recto", "stop_lat": 8.4847, "stop_lon": 124.6385 },
+  { "stop_id": "S4", "stop_name": "Bulua Terminal", "stop_lat": 8.4851, "stop_lon": 124.6153 }
+]

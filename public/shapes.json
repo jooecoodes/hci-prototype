@@ -1,0 +1,6 @@
+[
+  { "shape_id": "SHAPE001", "lat": 8.4823, "lon": 124.6477, "sequence": 1 },
+  { "shape_id": "SHAPE001", "lat": 8.4829, "lon": 124.6451, "sequence": 2 },
+  { "shape_id": "SHAPE001", "lat": 8.4847, "lon": 124.6385, "sequence": 3 },
+  { "shape_id": "SHAPE001", "lat": 8.4851, "lon": 124.6153, "sequence": 4 }
+]

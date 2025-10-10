@@ -1,1 +1,69 @@
 @import "tailwindcss";
+
+/* src/App.css (Minimal styling for clarity) */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.header h1 {
+  color: #007bff; /* Jeepney Blue */
+  margin: 0;
+}
+
+.reset-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reset-button:hover {
+  background-color: #c82333;
+}
+
+.status-bar {
+  background-color: #e9ecef;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-left: 5px solid #007bff;
+}
+
+.status-bar p {
+    margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.map-wrapper {
+    border: 1px solid #ccc;
+}
