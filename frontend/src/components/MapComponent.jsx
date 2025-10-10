@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from '
 import 'leaflet/dist/leaflet.css'; 
 import axios from "axios";
 
+const routeName = "Directions from FH58+9F, Cagayan de Oro, Misamis Oriental, Philippines to FJJP+3WJ, Ipil St, Cagayan de Oro, 9000 Misamis Oriental, Philippines";
+
 // Leaflet icon fix (necessary for default markers to show correctly in modern bundlers)
 import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
@@ -12,15 +14,33 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-function LocationMarker() {
+function LocationMarker({ routeName }) {
+  const [clickedLatLng, setClickedLatLng] = useState(null);
+
   useMapEvents({
     click(e) {
-      console.log("You clicked at:", e.latlng);
-      // You can also access e.latlng.lat and e.latlng.lng
+      console.log("Clicked:", e.latlng);
+      setClickedLatLng(e.latlng); // store click
     },
   });
 
-  return null; // this component doesn’t render anything visible
+  useEffect(() => {
+    if (!clickedLatLng) return;
+
+    axios
+      .get("http://localhost:5000/dist", {
+        params: {
+          lat: clickedLatLng.lat,
+          lng: clickedLatLng.lng,
+          route: routeName,
+        },
+      })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.error("Error:", err));
+
+  }, [clickedLatLng, routeName]); // run when click changes
+
+  return null;
 }
 
 
@@ -31,7 +51,6 @@ const MapComponent = () => {
 
   const [routes, setRoutes] = useState([]);
 
-  const routeName = "Lumbia (R1) Lumbia -- Cogon Public Market";
 
   // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
   const encodedName = encodeURIComponent(routeName);
@@ -79,7 +98,7 @@ const MapComponent = () => {
         positions={routes} 
         pathOptions={polylineOptions} 
       />
-      <LocationMarker />
+      <LocationMarker routeName={routeName}/>
     </MapContainer>
   );
 };
