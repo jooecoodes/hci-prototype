@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; 
 import axios from "axios";
 
@@ -12,8 +12,19 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+function LocationMarker() {
+  useMapEvents({
+    click(e) {
+      console.log("You clicked at:", e.latlng);
+      // You can also access e.latlng.lat and e.latlng.lng
+    },
+  });
 
-const CdoMap = () => {
+  return null; // this component doesn’t render anything visible
+}
+
+
+const MapComponent = () => {
   // Coordinates for Cagayan de Oro (latitude, longitude)
   const cdoPosition = [8.4842, 124.6472];
   const initialZoom = 13; 
@@ -68,8 +79,9 @@ const CdoMap = () => {
         positions={routes} 
         pathOptions={polylineOptions} 
       />
+      <LocationMarker />
     </MapContainer>
   );
 };
 
-export default CdoMap;
+export default MapComponent;
