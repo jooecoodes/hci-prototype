@@ -26,7 +26,7 @@ def get_route(route_name):
             return json.dumps(route)
     return json.dumps({"error": "Route not found"}), 404
 
-@app.route('/dist', methods=['GET'])
+@app.route('/dist/specific', methods=['GET'])
 def get_distance():
     params = request.args
     lat = float(params.get('lat'))
@@ -53,7 +53,20 @@ def get_distance():
                 "nearest_point": nearest_point,
                 "distance_km": distance
             })
-
     return json.dumps({"error": "Route not found"}), 404
+
+@app.route('/dist/jeeps', methods=['GET'])
+def get_jeep():
+    params = request.args
+    lat = float(params.get('lat'))
+    lon = float(params.get('lng'))
+    lat2 = float(params.get('lat2'))
+    lon2 = float(params.get('lng2'))
+    
+    print("lat, lon:", lat, lon)
+    print("lat2, lon2:", lat2, lon2)
+    
+    return "ok";
+    
 if __name__ == '__main__':    
     app.run(debug=True)

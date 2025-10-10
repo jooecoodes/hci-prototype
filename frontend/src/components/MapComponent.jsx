@@ -14,33 +14,81 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// icons
+const blueIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  iconRetinaUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+const redIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  iconRetinaUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 function LocationMarker({ routeName }) {
-  const [clickedLatLng, setClickedLatLng] = useState(null);
+  const [clickedOriginALatLng, setClickedOriginALatLng] = useState(null);
+  const [clickedOriginBLatLng, setClickedOriginBLatLng] = useState(null);
+  const [marker, setMarker] = useState(null);
 
   useMapEvents({
     click(e) {
       console.log("Clicked:", e.latlng);
-      setClickedLatLng(e.latlng); // store click
+      setMarker(e.latlng); // set marker position
+      if (!clickedOriginALatLng) {
+        setClickedOriginALatLng(e.latlng); // set clicked position
+      }
+      else if (!clickedOriginBLatLng) {
+        setClickedOriginBLatLng(e.latlng); // set clicked position
+      }
+      else {
+        // reset both if both are already set
+        setClickedOriginALatLng(e.latlng);
+        setClickedOriginBLatLng(null);
+      }
     },
   });
 
   useEffect(() => {
-    if (!clickedLatLng) return;
-
+    if (!clickedOriginALatLng || !clickedOriginBLatLng) return;
+    
     axios
-      .get("http://localhost:5000/dist", {
+      .get("http://localhost:5000/dist/jeeps", {
         params: {
-          lat: clickedLatLng.lat,
-          lng: clickedLatLng.lng,
-          route: routeName,
+          lat: clickedOriginALatLng.lat,
+          lng: clickedOriginALatLng.lng,
+          lat2: clickedOriginBLatLng.lat,
+          lng2: clickedOriginBLatLng.lng,
         },
       })
       .then((res) => console.log(res.data))
       .catch((err) => console.error("Error:", err));
 
-  }, [clickedLatLng, routeName]); // run when click changes
+  }, [clickedOriginBLatLng]); // run when click changes
 
-  return null;
+  return (
+  <>
+    {clickedOriginALatLng && (
+      <Marker position={clickedOriginALatLng} icon={blueIcon}>
+        <Popup>Origin A</Popup>
+      </Marker>
+    )}
+    {clickedOriginBLatLng && (
+      <Marker position={clickedOriginBLatLng} icon={redIcon}>
+        <Popup>Destination B</Popup>
+      </Marker>
+    )}
+  </>
+);
 }
 
 
