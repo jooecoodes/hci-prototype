@@ -70,28 +70,38 @@ def get_jeep():
         data = json.load(f)
     routes = data["jeepneyRoute"]
 
+        # Determine movement direction
+    moving_north = latB > latA
+    moving_east  = lngB > lngA
     
-    minLat = min(latA, latB)  # always bottom
-    maxLat = max(latA, latB)  # always top
-    minLng = min(lngA, lngB)  # always left
-    maxLng = max(lngA, lngB)  # always right
+    min_lng = min(lngA, lngB)
+    max_lng = max(lngA, lngB)
     
     candidate_routes = []
     
+    
     for route in routes:
-        # check if any point of this route is inside the bounding box
-        for coord in route['coordinates']:
-            lat, lng = coord
-            if minLat <= lat <= maxLat and minLng <= lng <= maxLng:
-                # this route passes through the area
+        coords = route['coordinates']
+        include_route = False
+        for lat, lng in coords:
+            # Longitude filter
+            if not (min_lng <= lng <= max_lng):
+                continue
+            
+            # Latitude filter based on direction
+            if moving_north and lat >= latA:
+                include_route = True
+            elif not moving_north and lat <= latA:
+                include_route = True
+            
+            if include_route:
                 candidate_routes.append(route)
-                break  # no need to check further points
+                break  # no need to check further points for this route
     
     print("lat, lon:", latA, lngB)
     print("lat2, lon2:", latA, lngB)
     print(f"Found {len(candidate_routes)} candidate routes in the area.")
 
-    
     return candidate_routes;
 
     

@@ -112,19 +112,21 @@ const MapComponent = () => {
   // }, [routeName])
 
    // Coordinates for the Polyline (our route)
-  const cdoRouteCoordinates = [
-    [8.4746, 124.6468], // Point A: Near Divisoria
-    [8.4795, 124.6490], // Point B: Along CM Recto Ave
-    [8.4835, 124.6450], // Point C: Near Limketkai Center
-  ];
+  // const cdoRouteCoordinates = [
+  //   [8.4746, 124.6468], // Point A: Near Divisoria
+  //   [8.4795, 124.6490], // Point B: Along CM Recto Ave
+  //   [8.4835, 124.6450], // Point C: Near Limketkai Center
+  // ];
 
-  // Options to style the polyline (using Leaflet's Path options)
-  const polylineOptions = { 
-    color: 'red',        // Color of the line
-    weight: 5,           // Thickness of the line
-    opacity: 0.8,        // Transparency
-    lineJoin: 'round',   // Style for line connections
-  };
+  // // Options to style the polyline (using Leaflet's Path options)
+  // const polylineOptions = { 
+  //   color: 'red',        // Color of the line
+  //   weight: 5,           // Thickness of the line
+  //   opacity: 0.8,        // Transparency
+  //   lineJoin: 'round',   // Style for line connections
+  // };
+
+  console.log("Rendering MapComponent with candidateRoutes:", candidateRoutes);
 
   return (
     // Tailwind classes applied:

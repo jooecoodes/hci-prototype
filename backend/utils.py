@@ -11,71 +11,63 @@ def haversine(lat1, lon1, lat2, lon2):
 def hello_world():
     return 'Hello from utils!'  
 
-def nearest_route_to_point(point, routes):
+def slice_route(segment, origin, destination):
     """
-    Find the route whose nearest coordinate is closest to the given point.
-    Returns: (route, nearest_point)
+    Slice a route segment from origin to destination direction.
+    Returns the part of the route moving toward destination.
     """
-    best_route = None
-    nearest_point = None
-    min_dist = float('inf')
-    
-    for route in routes:
-        for coord in route['coordinates']:
-            lat, lng = coord
-            dist = haversine(point[0], point[1], lat, lng)
-            if dist < min_dist:
-                min_dist = dist
-                best_route = route
-                nearest_point = coord
-                
-    return best_route, nearest_point
+    latA, lonA = origin
+    latB, lonB = destination
 
+    # Determine directions
+    north = latB > latA
+    east  = lonB > lonA
 
-def find_routes(origin, destination, routes):
+    sliced = []
+    for lat, lon in segment:
+        if north and lat >= latA:
+            sliced.append((lat, lon))
+        elif not north and lat <= latA:
+            sliced.append((lat, lon))
+        if east and lon >= lonA:
+            sliced.append((lat, lon))
+        elif not east and lon <= lonA:
+            sliced.append((lat, lon))
+    return sliced
+
+def filter_relevant_routes(origin, destination, candidate_routes,
+                           initial_distance=0.2, increment=0.1, max_distance=5.0):
     """
-    Determine possible routes for a trip from origin to destination.
-    Returns a list of route(s) forming the path.
+    Return routes that have at least one point close enough to the destination.
+    Gradually expands search radius if no routes are found.
     """
-    start_route, start_point = nearest_route_to_point(origin, routes)
-    end_route, end_point = nearest_route_to_point(destination, routes)
-    
-    # Single-route trip
-    if start_route['name'] == end_route['name']:
-        return [start_route]
-    
-    # Multi-route trip: build route connections
-    # Build a route graph: nodes = routes, edges = if any coordinate is within threshold (e.g., 0.2 km)
-    threshold_km = 0.2
-    route_graph = {r['name']: set() for r in routes}
-    
-    for i, r1 in enumerate(routes):
-        for j, r2 in enumerate(routes):
-            if i == j:
-                continue
-            for c1 in r1['coordinates']:
-                for c2 in r2['coordinates']:
-                    if haversine(c1[0], c1[1], c2[0], c2[1]) <= threshold_km:
-                        route_graph[r1['name']].add(r2['name'])
-                        break
-                else:
-                    continue
-                break
-    
-    # BFS to find path from start_route to end_route
-    from collections import deque
-    visited = set()
-    queue = deque([(start_route['name'], [start_route['name']])])
-    
-    while queue:
-        current, path = queue.popleft()
-        if current == end_route['name']:
-            # return route objects in order
-            return [next(r for r in routes if r['name'] == rn) for rn in path]
-        visited.add(current)
-        for neighbor in route_graph[current]:
-            if neighbor not in visited:
-                queue.append((neighbor, path + [neighbor]))
-    
-    # If no path found
+    distance = initial_distance
+
+    while distance <= max_distance:
+        relevant_routes = []
+
+        for route in candidate_routes:
+            coords = route['coordinates']
+
+            # Find the closest point in the route to the destination
+            closest_point = min(coords, key=lambda c: haversine(c[0], c[1], destination[0], destination[1]))
+            dist_to_dest = haversine(closest_point[0], closest_point[1], destination[0], destination[1])
+
+            if dist_to_dest <= distance:
+                relevant_routes.append({
+                    'name': route['name'],
+                    'coordinates': coords,  # keep full route
+                    'distance_to_dest_km': dist_to_dest
+                })
+
+        # Sort by distance to destination (closest first)
+        relevant_routes.sort(key=lambda x: x['distance_to_dest_km'])
+
+        if relevant_routes:
+            return relevant_routes
+
+        # Increase search distance
+        distance += increment
+        print(f"No relevant routes found, increasing search distance to {distance:.1f} km")
+
     return []
