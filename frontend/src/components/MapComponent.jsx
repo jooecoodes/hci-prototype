@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from '
 import 'leaflet/dist/leaflet.css'; 
 import axios from "axios";
 
-const routeName = "Directions from FH58+9F, Cagayan de Oro, Misamis Oriental, Philippines to FJJP+3WJ, Ipil St, Cagayan de Oro, 9000 Misamis Oriental, Philippines";
+// const routeName = "Carmen (R4) Agora Market City and Terminal -- Pueblo de Oro (Xavier Estates Gate 3)  ";
 
 // Leaflet icon fix (necessary for default markers to show correctly in modern bundlers)
 import L from 'leaflet';
@@ -35,7 +35,7 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-function LocationMarker({ routeName }) {
+function LocationMarker({ setCandidateRoutes}) {
   const [clickedOriginALatLng, setClickedOriginALatLng] = useState(null);
   const [clickedOriginBLatLng, setClickedOriginBLatLng] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -70,7 +70,7 @@ function LocationMarker({ routeName }) {
           lng2: clickedOriginBLatLng.lng,
         },
       })
-      .then((res) => console.log(res.data))
+      .then((res) => setCandidateRoutes(res.data))
       .catch((err) => console.error("Error:", err));
 
   }, [clickedOriginBLatLng]); // run when click changes
@@ -97,18 +97,19 @@ const MapComponent = () => {
   const cdoPosition = [8.4842, 124.6472];
   const initialZoom = 13; 
 
-  const [routes, setRoutes] = useState([]);
+  // const [routes, setRoutes] = useState([]);
+  const [candidateRoutes, setCandidateRoutes] = useState([]);
 
 
-  // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
-  const encodedName = encodeURIComponent(routeName);
+  // // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
+  // const encodedName = encodeURIComponent(routeName);
   
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/route/${encodedName}`)
-      .then((response) => setRoutes(response.data["coordinates"]))
-      .catch((error) => console.error("Error:", error));
-  }, [routeName])
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:5000/route/${encodedName}`)
+  //     .then((response) => setRoutes(response.data["coordinates"]))
+  //     .catch((error) => console.error("Error:", error));
+  // }, [routeName])
 
    // Coordinates for the Polyline (our route)
   const cdoRouteCoordinates = [
@@ -142,11 +143,20 @@ const MapComponent = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       
-      <Polyline 
+      {/* <Polyline 
         positions={routes} 
         pathOptions={polylineOptions} 
-      />
-      <LocationMarker routeName={routeName}/>
+      /> */}
+
+      {candidateRoutes.map((route, index) => (
+        <Polyline 
+          key={index}
+          positions={route.coordinates}
+          pathOptions={{ color: 'blue', weight: 3, opacity: 0.5 }}
+        />
+      ))}
+
+      <LocationMarker setCandidateRoutes={setCandidateRoutes}/>
     </MapContainer>
   );
 };

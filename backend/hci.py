@@ -6,19 +6,22 @@ import utils
 app = Flask(__name__)
 CORS(app)
 
+routes_path = "routes_District_all.json"
+
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
 
 @app.route('/routes', methods=['GET'])
 def get_routes():
-    with open("D1_routes.json", "r", encoding="utf-8") as f:
+    with open(routes_path, "r", encoding="utf-8") as f:
         data = json.load(f)  # Step 2: Parse it
     return json.dumps(data)
 
 @app.route('/route/<route_name>', methods=['GET'])
 def get_route(route_name):
-    with open("D1_routes.json", "r", encoding="utf-8") as f:
+    with open(routes_path, "r", encoding="utf-8") as f:
         data = json.load(f)  # Step 2: Parse it
     routes = data["jeepneyRoute"]
     for route in routes:
@@ -33,7 +36,7 @@ def get_distance():
     lon = float(params.get('lng'))
     route = params.get('route')
 
-    with open("D1_routes.json", "r", encoding="utf-8") as f:
+    with open(routes_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     routes = data["jeepneyRoute"]
 
@@ -58,15 +61,39 @@ def get_distance():
 @app.route('/dist/jeeps', methods=['GET'])
 def get_jeep():
     params = request.args
-    lat = float(params.get('lat'))
-    lon = float(params.get('lng'))
-    lat2 = float(params.get('lat2'))
-    lon2 = float(params.get('lng2'))
+    latA = float(params.get('lat'))
+    lngA = float(params.get('lng'))
+    latB = float(params.get('lat2'))
+    lngB = float(params.get('lng2'))
     
-    print("lat, lon:", lat, lon)
-    print("lat2, lon2:", lat2, lon2)
+    with open(routes_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    routes = data["jeepneyRoute"]
+
     
-    return "ok";
+    minLat = min(latA, latB)  # always bottom
+    maxLat = max(latA, latB)  # always top
+    minLng = min(lngA, lngB)  # always left
+    maxLng = max(lngA, lngB)  # always right
+    
+    candidate_routes = []
+    
+    for route in routes:
+        # check if any point of this route is inside the bounding box
+        for coord in route['coordinates']:
+            lat, lng = coord
+            if minLat <= lat <= maxLat and minLng <= lng <= maxLng:
+                # this route passes through the area
+                candidate_routes.append(route)
+                break  # no need to check further points
+    
+    print("lat, lon:", latA, lngB)
+    print("lat2, lon2:", latA, lngB)
+    print(f"Found {len(candidate_routes)} candidate routes in the area.")
+
+    
+    return candidate_routes;
+
     
 if __name__ == '__main__':    
     app.run(debug=True)
