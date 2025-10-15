@@ -101,38 +101,11 @@ const MapComponent = () => {
   const [candidateRoutes, setCandidateRoutes] = useState([]);
 
 
-  // // Encode the route name so special characters (spaces, commas, etc.) are safe in a URL
-  // const encodedName = encodeURIComponent(routeName);
-  
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:5000/route/${encodedName}`)
-  //     .then((response) => setRoutes(response.data["coordinates"]))
-  //     .catch((error) => console.error("Error:", error));
-  // }, [routeName])
-
-   // Coordinates for the Polyline (our route)
-  // const cdoRouteCoordinates = [
-  //   [8.4746, 124.6468], // Point A: Near Divisoria
-  //   [8.4795, 124.6490], // Point B: Along CM Recto Ave
-  //   [8.4835, 124.6450], // Point C: Near Limketkai Center
-  // ];
-
-  // // Options to style the polyline (using Leaflet's Path options)
-  // const polylineOptions = { 
-  //   color: 'red',        // Color of the line
-  //   weight: 5,           // Thickness of the line
-  //   opacity: 0.8,        // Transparency
-  //   lineJoin: 'round',   // Style for line connections
-  // };
 
   console.log("Rendering MapComponent with candidateRoutes:", candidateRoutes);
 
   return (
-    // Tailwind classes applied:
-    // h-screen: Sets height to 100vh
-    // w-screen: Sets width to 100vw
-    // absolute and top-0 left-0: Ensures the map covers the entire viewport
+
     <MapContainer 
       center={cdoPosition} 
       zoom={initialZoom} 
